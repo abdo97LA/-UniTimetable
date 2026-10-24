@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex,nofollow">
+<title>Déclaration des absences – UM6SS FM6SIPS Dakhla</title>
+<style>
+:root{--bg:#f4f5f9;--card:#fff;--tx:#1b1f2a;--mu:#667085;--bd:#dfe3ec;--ac:#1f6b3a;--bad:#c62828;--wr:#b45309}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;padding-bottom:96px}
+header{background:var(--ac);color:#fff;padding:14px 16px;padding-top:calc(14px + env(safe-area-inset-top,0px))}header b{display:block;font-size:15px}header span{font-size:13px;opacity:.9}
+main{max-width:640px;margin:0 auto;padding:12px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:12px}
+.k{color:var(--mu);font-size:12px;text-transform:uppercase;letter-spacing:.03em}.v{font-weight:600}.g{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+input[type=search],input[type=text],textarea{width:100%;font:inherit;padding:12px;border:1px solid var(--bd);border-radius:10px;background:#fff;color:var(--tx)}
+.st{display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid var(--bd);min-height:56px;cursor:pointer}.st:last-child{border:0}
+.st input{width:24px;height:24px;flex:none;accent-color:var(--bad)}.st .n{flex:1;font-weight:500}.st .m{color:var(--mu);font-size:13px}.st.on{background:#fdecec}
+.bar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--bd);padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));display:flex;gap:12px;align-items:center;justify-content:space-between}
+.bar b{font-size:18px}button{font:inherit;border:0;border-radius:10px;padding:13px 18px;background:var(--ac);color:#fff;font-weight:600;cursor:pointer}button:disabled{opacity:.5}button.s{background:#e8eaf0;color:var(--tx)}
+.err{color:var(--bad);font-weight:600;margin:8px 0}.ok{color:var(--ac)}.wr{color:var(--wr)}
+canvas{width:100%;height:150px;border:2px dashed var(--bd);border-radius:10px;background:#fff;touch-action:none;display:block}
+label.o{display:flex;gap:10px;align-items:flex-start;margin:8px 0;font-size:15px}label.o input{width:22px;height:22px;flex:none;margin-top:1px}
+.big{font-size:44px;text-align:center}
+</style>
+</head>
+<body>
+<header><b>UM6SS – FM6SIPS Dakhla</b><span>Déclaration des absences</span></header>
+<main id="app"><div class="card">Chargement…</div></main>
+<script>
+(function(){
+'use strict';
+var token=location.pathname.split('/')[2]||'',app=document.getElementById('app'),D=null,sel=new Set(),none=false,amend=false,sigType='handwritten',inked=0,sending=false;
+function el(t,a,c){var e=document.createElement(t);if(a)for(var k in a){if(k==='class')e.className=a[k];else if(k==='text')e.textContent=a[k];else e.setAttribute(k,a[k])}(c||[]).forEach(function(x){e.appendChild(typeof x==='string'?document.createTextNode(x):x)});return e}
+function api(m,p,b){return fetch(p,{method:m,headers:b?{'Content-Type':'application/json'}:{},body:b?JSON.stringify(b):undefined,credentials:'omit',referrerPolicy:'no-referrer'}).then(function(r){return r.json().catch(function(){return{}}).then(function(j){if(!r.ok){var e=new Error(j.error||('Erreur '+r.status));e.status=r.status;throw e}return j})})}
+function fr(d){try{return new Date(d+'T00:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}catch(e){return d}}
+var YL=function(y){return y?(y==='1'?'1ère année':y+'ème année'):'—'},GL=function(g){return g?(/^G\d+$/.test(g)?'Groupe '+g.slice(1):g):'Tous les groupes'};
+function fail(msg){app.innerHTML='';app.appendChild(el('div',{class:'card'},[el('div',{class:'big',text:'⚠'}),el('p',{class:'err',text:msg}),el('p',{class:'k',text:'Contactez l’administration pour obtenir un nouveau lien.'})]))}
+function info(){var s=D.session,g=el('div',{class:'card'});
+  var grid=el('div',{class:'g'});[['Matière',s.subject,1],['Enseignant',s.teacher],['Date',fr(s.date)],['Horaire',s.start+' – '+s.end],['Filière',s.program||'—'],['Année · Groupe',YL(s.year)+' · '+GL(s.group)]].forEach(function(r){var c=el('div',r[2]?{style:'grid-column:1/3'}:null,[el('div',{class:'k',text:r[0]}),el('div',{class:'v',text:r[1]})]);grid.appendChild(c)});g.appendChild(grid);return g}
+function render(){
+  app.innerHTML='';app.appendChild(info());
+  if(!D.canDeclare&&!D.submitted){app.appendChild(el('div',{class:'card'},[el('div',{class:'big',text:'⏳'}),el('p',{class:'wr v',text:'La séance n’a pas encore commencé.'}),el('p',{text:'La déclaration sera possible à partir de '+D.startsAt.split(' ')[1]+'.'})]));return}
+  if(D.submitted&&!amend){var sm=el('div',{class:'card'},[el('div',{class:'big ok',text:'✔'}),el('p',{class:'v',text:'Déclaration déjà enregistrée : '+D.submitted.total+' absent(s).'}),el('p',{class:'k',text:'Reçue le '+new Date(D.submitted.submittedAt).toLocaleString('fr-FR')})]);
+    var ul=el('div');D.students.filter(function(s){return D.submitted.absent.indexOf(s.m)>=0}).forEach(function(s){ul.appendChild(el('div',{class:'st'},[el('span',{class:'n',text:s.n}),el('span',{class:'m',text:s.m})]))});sm.appendChild(ul);
+    if(!D.submitted.canAmend){sm.appendChild(el('p',{class:'wr',text:D.submitted.amendMsg||'La modification n’est plus possible.'}));app.appendChild(sm);return}
+    sm.appendChild(el('button',{class:'s',text:'Modifier la déclaration'}));app.appendChild(sm);sm.lastChild.onclick=function(){if(confirm('Cette déclaration est déjà validée. Voulez-vous vraiment la modifier ? L’ancienne version sera conservée dans l’historique.')){amend=true;sel=new Set(D.submitted.absent);none=D.submitted.total===0;render()}};return}
+  var c=el('div',{class:'card'}),q=el('input',{type:'search',placeholder:'Rechercher nom, prénom ou matricule',autocomplete:'off'});c.appendChild(q);
+  var nl=el('label',{class:'o'},[el('input',{type:'checkbox',id:'none'}),el('span',{text:'Aucun étudiant n’est absent'})]);c.appendChild(nl);var list=el('div',{id:'list'});c.appendChild(list);app.appendChild(c);
+  var cnt=document.createElement('b'),bar=el('div',{class:'bar'});
+  function upd(){cnt.textContent='Absents : '+sel.size+' / '+D.students.length}
+  function draw(){var f=q.value.trim().toLowerCase();list.innerHTML='';D.students.filter(function(s){return !f||(s.n+' '+s.m).toLowerCase().indexOf(f)>=0}).forEach(function(s){var cb=el('input',{type:'checkbox'});cb.checked=sel.has(s.m);var row=el('label',{class:'st'+(cb.checked?' on':'')},[cb,el('span',{class:'n',text:s.n}),el('span',{class:'m',text:s.m})]);cb.onchange=function(){if(cb.checked){sel.add(s.m);none=false;document.getElementById('none').checked=false}else sel.delete(s.m);row.className='st'+(cb.checked?' on':'');upd()};list.appendChild(row)});if(!list.children.length)list.appendChild(el('p',{class:'k',text:'Aucun étudiant trouvé.'}))}
+  q.oninput=draw;draw();var nb=document.getElementById('none');nb.checked=none;nb.onchange=function(){none=nb.checked;if(none){sel.clear();draw()}upd()};
+  var rm=el('div',{class:'card'},[el('div',{class:'k',text:'Remarque (facultative)'}),el('textarea',{id:'rm',rows:'3',maxlength:'1000'})]);app.appendChild(rm);
+  if(amend)rm.appendChild(el('div',{style:'margin-top:10px'},[el('div',{class:'k',text:'Motif de la modification (obligatoire)'}),el('input',{type:'text',id:'why',maxlength:'300'})]));
+  var sg=el('div',{class:'card'},[el('div',{class:'k',text:'Signature'})]);
+  var r1=el('label',{class:'o'},[el('input',{type:'radio',name:'st',value:'handwritten'}),el('span',{text:'Signature manuscrite (au doigt)'})]),r2=el('label',{class:'o'},[el('input',{type:'radio',name:'st',value:'electronic'}),el('span',{text:'Confirmation électronique (n’est pas une signature manuscrite)'})]);sg.appendChild(r1);sg.appendChild(r2);
+  var box=el('div');sg.appendChild(box);app.appendChild(sg);
+  function sigUI(){box.innerHTML='';if(sigType==='handwritten'){var cv=el('canvas',{width:'600',height:'300'}),ctx=cv.getContext('2d'),dn=false,lx=0,ly=0;inked=0;ctx.lineWidth=4;ctx.lineCap='round';ctx.strokeStyle='#111';
+    function pt(e){var r=cv.getBoundingClientRect();return[(e.clientX-r.left)*cv.width/r.width,(e.clientY-r.top)*cv.height/r.height]}
+    cv.onpointerdown=function(e){dn=true;var p=pt(e);lx=p[0];ly=p[1];cv.setPointerCapture(e.pointerId);e.preventDefault()};cv.onpointermove=function(e){if(!dn)return;var p=pt(e);ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(p[0],p[1]);ctx.stroke();lx=p[0];ly=p[1];inked++;e.preventDefault()};cv.onpointerup=cv.onpointercancel=function(){dn=false};
+    box.appendChild(cv);var cl=el('button',{class:'s',text:'Effacer',style:'margin-top:8px'});cl.onclick=function(){ctx.clearRect(0,0,cv.width,cv.height);inked=0};box.appendChild(cl);box.appendChild(el('input',{type:'text',id:'sby',placeholder:'Nom de l’enseignant (facultatif)',style:'margin-top:8px',value:D.session.teacher}))}
+    else{box.appendChild(el('label',{class:'o'},[el('input',{type:'checkbox',id:'cf'}),el('span',{text:'Je certifie l’exactitude de cette déclaration.'})]));box.appendChild(el('input',{type:'text',id:'sby',placeholder:'Tapez votre nom complet',value:''}))}}
+  r1.firstChild.checked=true;[r1,r2].forEach(function(r){r.firstChild.onchange=function(){sigType=r.firstChild.value;sigUI()}});sigUI();
+  var msg=el('div',{class:'err',id:'msg',role:'alert'});app.appendChild(msg);
+  var go=el('button',{text:amend?'Enregistrer la modification':'Valider la déclaration'});bar.appendChild(cnt);bar.appendChild(go);document.body.appendChild(bar);upd();
+  go.onclick=function(){msg.textContent='';if(sending)return;if(!sel.size&&!none)return msg.textContent='Sélectionnez les absents ou cochez « Aucun étudiant n’est absent ».';
+    var b={absent:Array.from(sel),none:none,remark:document.getElementById('rm').value,signatureType:sigType,signedBy:(document.getElementById('sby')||{}).value||''};
+    if(amend){b.amend=true;b.reason=(document.getElementById('why')||{}).value||'';if(b.reason.trim().length<3)return msg.textContent='Indiquez le motif de la modification.'}
+    if(sigType==='handwritten'){if(inked<6)return msg.textContent='Veuillez signer dans le cadre.';b.signature=app.querySelector('canvas').toDataURL('image/png')}
+    else{if(!document.getElementById('cf').checked)return msg.textContent='Cochez la case de certification.';if(b.signedBy.trim().length<2)return msg.textContent='Tapez votre nom complet.';b.confirm=true}
+    if(!confirm('Confirmer la déclaration : '+sel.size+' absent(s) sur '+D.students.length+' ?'))return;
+    sending=true;go.disabled=true;go.textContent='Envoi…';
+    api('POST','/api/form/'+encodeURIComponent(token)+'/submit',b).then(function(r){bar.remove();app.innerHTML='';app.appendChild(el('div',{class:'card'},[el('div',{class:'big ok',text:'✔'}),el('p',{class:'v',text:'Déclaration enregistrée.'}),el('p',{text:r.total+' absent(s) déclaré(s). Merci, vous pouvez fermer cette page.'})]))}).catch(function(e){sending=false;go.disabled=false;go.textContent=amend?'Enregistrer la modification':'Valider la déclaration';msg.textContent=e.message||'Échec de l’envoi, réessayez.'})};
+}
+api('GET','/api/form/'+encodeURIComponent(token)).then(function(j){D=j;render()}).catch(function(e){fail(e.status===404?'Ce lien n’est pas valide.':e.message)});
+})();
+</script>
+</body>
+</html>
