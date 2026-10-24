@@ -1,0 +1,8 @@
+{
+  "name": "um6ss-edt-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Serveur de déclarations d'absences – UM6SS FM6SIPS Dakhla (aucune dépendance)",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" }
+}
